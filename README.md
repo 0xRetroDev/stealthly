@@ -1,5 +1,3 @@
-Here's a comprehensive README for your STEALTHLY token launchpad project:
-
 # STEALTHLY
 
 **Token Launchpad Demo on FAIR chain**
