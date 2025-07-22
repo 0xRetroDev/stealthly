@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-// import { BITE } from '@skalenetwork/bite'; // Uncomment when library is fixed
+import { BITE } from '@skalenetwork/bite';
 import { Shield, Lock, Eye, Zap, TrendingUp, AlertCircle, CheckCircle, LogOut, Wallet, Twitter, MessageCircle, Github, Send } from 'lucide-react';
 import TokenCard from './TokenCard.jsx';
 import CreateTokenForm from './CreateTokenForm.jsx';
@@ -9,10 +9,10 @@ import TransactionModal from './TransactionModal.jsx';
 import TokensMarketplace from './TokensMarketplace.jsx';
 
 /**
- * BITE Configuration - Change this to true when library is fixed
+ * BITE Configuration - Real BITE library is available
  */
-const BITE_ENABLED = false; // Set to true to enable BITE functionality
-const BITE_UI_TEST_MODE = true; // Set to true to test BITE UI without actual library
+const BITE_ENABLED = true; // Set to true to enable BITE functionality
+const BITE_UI_TEST_MODE = false; // Set to true to test BITE UI without actual library
 
 /**
  * Contract ABIs for interacting with the deployed smart contracts
@@ -113,8 +113,7 @@ function TokenLaunchpad() {
     
     try {
       if (BITE_ENABLED) {
-        // Uncomment when BITE library is fixed:
-        /*
+        // Real BITE implementation
         const bite = new BITE(SKALE_ENDPOINT);
         
         // Test BITE connection by fetching public key
@@ -128,13 +127,6 @@ function TokenLaunchpad() {
         console.log('Public key length:', publicKey.length);
         
         showNotification('Encryption enabled - transactions will be private', 'success');
-        */
-        
-        // Temporary stub for when BITE is not available
-        console.log('BITE library not available - using stub');
-        setBiteStatus('error');
-        setEncryptionEnabled(false);
-        showNotification('Encryption unavailable - transactions will be public', 'warning');
       } else if (BITE_UI_TEST_MODE) {
         // Enable functionality without actual BITE
         console.log('BITE encryption initialized successfully');
