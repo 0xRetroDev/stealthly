@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,15 +14,6 @@ export default defineConfig({
       },
       protocolImports: true,
     }),
-            viteStaticCopy({
-            targets: [
-                {
-                    // Copy encrypt.wasm from the t-encrypt into dist
-                    src: '../../node_modules/@skalenetwork/t-encrypt/encrypt.wasm',
-                    dest: '',
-                },
-            ],
-        }),
   ],
   define: {
     global: 'globalThis',
@@ -43,6 +33,18 @@ export default defineConfig({
   },
   assetsInclude: ['**/*.wasm'],
   optimizeDeps: {
-    exclude: ['@skalenetwork/bite']
+    exclude: ['@skalenetwork/bite'],
+    include: ['@skalenetwork/t-encrypt'] // Force pre-bundling
+  },
+  // Add this to handle CommonJS modules
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    }
+  },
+  // Handle ESM/CommonJS interop
+  ssr: {
+    noExternal: ['@skalenetwork/bite', '@skalenetwork/t-encrypt']
   }
 })
