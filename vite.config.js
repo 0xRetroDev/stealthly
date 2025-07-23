@@ -34,9 +34,8 @@ export default defineConfig({
   assetsInclude: ['**/*.wasm'],
   optimizeDeps: {
     exclude: ['@skalenetwork/bite'],
-    include: ['@skalenetwork/t-encrypt'] // Force pre-bundling
+    include: ['@skalenetwork/t-encrypt']
   },
-  // Add this to handle CommonJS modules
   build: {
     commonjsOptions: {
       include: [/node_modules/],
