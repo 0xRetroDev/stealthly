@@ -462,7 +462,7 @@ function TokenLaunchpad() {
                 initialBuyAmount
               ]),
           value: totalValue,
-          gasLimit: 2000000
+          gasLimit: 5000000
         };
 
         console.log('BEFORE ENCRYPTION - Original transaction:', transactionData);
