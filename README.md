@@ -6,7 +6,7 @@ A Pump.fun-style token launch platform built on FAIR Chain with BITE encryption 
 
 - **Exponential Bonding Curve**: Fair price discovery from launch to graduation
 - **Anti-Dump Protection**: Time-decaying fees (20% → 1% over 15 minutes)
-- **Auto-Graduation**: Automatic DEX listing when threshold is reached
+- **Auto-Graduation**: Automatic DEX listing when threshold is reached. (Feel free to integrete your DEX of choice)
 - **BITE Encryption**: Transaction security through FAIR's native encryption layer
 
 ## How It Works
@@ -28,7 +28,7 @@ A Pump.fun-style token launch platform built on FAIR Chain with BITE encryption 
 
 ## ⚠️ Disclaimer
 
-This is a demo project for educational purposes. Play responsibly and never gamble more than you can afford to lose.
+This is a demo project for educational purposes. Use responsibly and never gamble more than you can afford to lose.
 
 ---
 
