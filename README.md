@@ -13,7 +13,7 @@ A Pump.fun-style token launch platform built on FAIR Chain with BITE encryption 
 
 1. **Create**: Deploy your token with metadata and optional initial buy
 2. **Trade**: Buy/sell on the bonding curve with transparent pricing
-3. **Graduate**: Automatic liquidity provision to DEX at ~8,057 AVAX raised
+3. **Graduate**: Automatic liquidity provision to DEX at ~8,057 FAIR raised
 
 ## Smart Contracts
 
