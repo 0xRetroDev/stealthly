@@ -21,7 +21,6 @@ A Pump.fun-style token launch platform built on FAIR Chain with BITE encryption 
 - `BondingCurve.sol` - Exponential curve trading with anti-dump fees
 - `LaunchToken.sol` - ERC20 token with trading restrictions
 - `TokenAdminLib.sol` - Batch operations and analytics
-```
 
 ## Security
 
