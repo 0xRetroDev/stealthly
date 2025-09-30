@@ -9,7 +9,7 @@ import TransactionModal from './TransactionModal.jsx';
 import TokensMarketplace from './TokensMarketplace.jsx';
 
 const BITE_ENABLED = true;
-const BITE_DEBUG_MODE = true;
+const BITE_DEBUG_MODE = false;
 
 const FACTORY_ABI = [
   "function createToken(string name, string symbol, string description, string imageUrl, uint256 initialBuyAmount) external payable returns (address token, address bondingCurve)",
@@ -44,8 +44,8 @@ const TOKEN_ABI = [
   "function getSocialLinks() external view returns (string website, string twitter)"
 ];
 
-const FACTORY_ADDRESS = import.meta.env.VITE_FACTORY_ADDRESS || "0xaF91835078a449927a949F42C0a29863F8d2bDa6";
-const SKALE_ENDPOINT = import.meta.env.VITE_SKALE_ENDPOINT || "https://testnet-v1.skalenodes.com/v1/gifted-strong-minkar";
+const FACTORY_ADDRESS = import.meta.env.VITE_FACTORY_ADDRESS || "0xD45A094Df292d84ec071d70d186Eb0061e0Be199";
+const SKALE_ENDPOINT = import.meta.env.VITE_SKALE_ENDPOINT || "https://testnet-rpc.fair.cloud/";
 
 const validateSkaleEndpoint = async (endpoint) => {
   try {
@@ -63,7 +63,6 @@ const validateSkaleEndpoint = async (endpoint) => {
     });
     
     const result = await response.json();
-    console.log('SKALE endpoint validation result:', result);
     
     return response.ok && result.result;
   } catch (error) {
@@ -112,14 +111,12 @@ function TokenLaunchpad() {
     if (!BITE_ENABLED) {
       setBiteStatus('error');
       setEncryptionEnabled(false);
-      console.log('BITE is disabled via configuration');
       return;
     }
 
     setBiteStatus('connecting');
     
     try {
-      console.log('Initializing BITE with endpoint:', SKALE_ENDPOINT);
       
       const isEndpointValid = await validateSkaleEndpoint(SKALE_ENDPOINT);
       if (!isEndpointValid) {
@@ -136,8 +133,7 @@ function TokenLaunchpad() {
         });
       }
       
-      console.log('Fetching BITE public key...');
-      const publicKey = await bite.getCommonPublicKey();
+      const publicKey = await bite.getCommitteesInfo(SKALE_ENDPOINT);
       
       if (!publicKey || publicKey.length === 0) {
         throw new Error('Invalid public key received from BITE');
@@ -151,7 +147,6 @@ function TokenLaunchpad() {
         });
       }
       
-      console.log('Testing BITE encryption capability...');
       const testTx = {
         to: '0x0000000000000000000000000000000000000000',
         data: '0x',
@@ -181,10 +176,7 @@ function TokenLaunchpad() {
       setBiteInstance(bite);
       setEncryptionEnabled(true);
       setBiteStatus('connected');
-      
-      console.log('BITE encryption initialized successfully');
-      console.log('Public key length:', publicKey.length);
-      console.log('Test encryption successful, to address:', testEncrypted.to);
+  
       
       showNotification('Encryption enabled - transactions will be private', 'success');
       
@@ -245,9 +237,6 @@ function TokenLaunchpad() {
       setSigner(signer);
       setUserAddress(userAddress);
       setNetworkName(network.name);
-
-      console.log('Wallet connected:', userAddress);
-      console.log('Network:', network.name, network.chainId);
 
       await initializeBiteEncryption();
       await loadPlatformData(provider);
@@ -311,8 +300,6 @@ function TokenLaunchpad() {
       const factoryContract = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, provider);
       const tokenAddresses = await factoryContract.getAllTokens();
       
-      console.log(`Loading ${tokenAddresses.length} tokens from factory`);
-      
       const tokenDataPromises = tokenAddresses.map(async (tokenAddress) => {
         try {
           return await loadTokenData(tokenAddress);
@@ -328,7 +315,6 @@ function TokenLaunchpad() {
       validTokens.sort((a, b) => b.launchTime - a.launchTime);
       
       setTokens(validTokens);
-      console.log(`Loaded ${validTokens.length} valid tokens`);
       
     } catch (error) {
       console.error('Failed to load tokens:', error);
@@ -440,8 +426,7 @@ function TokenLaunchpad() {
       const totalValue = initialBuyAmount + creationFeeAmount;
 
       if (encryptionEnabled && biteInstance && BITE_ENABLED) {
-        console.log('Creating encrypted token launch transaction');
-        
+    
         const transactionData = {
           to: FACTORY_ADDRESS,
           data: tokenData.website || tokenData.twitter 
@@ -465,14 +450,8 @@ function TokenLaunchpad() {
           gasLimit: 5000000
         };
 
-        console.log('BEFORE ENCRYPTION - Original transaction:', transactionData);
-
         const encryptedTransaction = await biteInstance.encryptTransaction(transactionData);
-        
-        console.log('AFTER ENCRYPTION - Full encrypted object:', encryptedTransaction);
-        console.log('AFTER ENCRYPTION - Data field specifically:', encryptedTransaction.data);
-        console.log('AFTER ENCRYPTION - Data type:', typeof encryptedTransaction.data);
-        console.log('AFTER ENCRYPTION - Data length:', encryptedTransaction.data?.length);
+      
 
         // Create clean transaction object for sending
         const cleanTransaction = {
@@ -482,14 +461,11 @@ function TokenLaunchpad() {
           gasLimit: encryptedTransaction.gasLimit
         };
 
-        console.log('SENDING TO METAMASK - Clean transaction:', cleanTransaction);
-
         const transaction = await signer.sendTransaction(cleanTransaction);
         
         await transaction.wait();
         
       } else {
-        console.log('Creating public token launch transaction');
         
         let transaction;
         
@@ -506,7 +482,6 @@ function TokenLaunchpad() {
               { value: totalValue }
             );
           } catch (error) {
-            console.log('Enhanced token creation not supported, falling back to basic creation');
             transaction = await factoryContract.createToken(
               tokenData.name,
               tokenData.symbol,
@@ -528,7 +503,7 @@ function TokenLaunchpad() {
         }
         
         const receipt = await transaction.wait();
-        console.log('Public token creation confirmed:', receipt.transactionHash);
+
       }
 
       updateTransactionModal('success');
@@ -581,7 +556,6 @@ function TokenLaunchpad() {
       const purchaseAmountWei = ethers.parseEther(purchaseAmount);
 
       if (encryptionEnabled && biteInstance && BITE_ENABLED) {
-        console.log('Creating encrypted buy transaction');
         
         const transactionData = {
           to: tokenData.bondingCurveAddress,
@@ -590,33 +564,18 @@ function TokenLaunchpad() {
           gasLimit: 500000
         };
 
-        console.log('Buy transaction data before encryption:', {
-          to: transactionData.to,
-          dataLength: transactionData.data.length,
-          value: transactionData.value.toString(),
-          gasLimit: transactionData.gasLimit
-        });
-
         const encryptedTransaction = await biteInstance.encryptTransaction(transactionData);
         
-        console.log('Encrypted buy transaction received:', {
-          to: encryptedTransaction?.to,
-          dataLength: encryptedTransaction?.data?.length,
-          value: encryptedTransaction?.value,
-          gasLimit: encryptedTransaction?.gasLimit
-        });
 
         if (!encryptedTransaction || !encryptedTransaction.data || encryptedTransaction.data === '0x' || encryptedTransaction.data === '') {
           throw new Error('BITE encryption failed - no transaction data returned');
         }
 
-        console.log('Sending encrypted buy transaction');
         const transaction = await signer.sendTransaction(encryptedTransaction);
         
         await transaction.wait();
         
       } else {
-        console.log('Creating public buy transaction');
         
         const transaction = await bondingCurveContract.buyTokens(0, {
           value: purchaseAmountWei
@@ -684,7 +643,7 @@ function TokenLaunchpad() {
       }
 
       if (encryptionEnabled && biteInstance && BITE_ENABLED) {
-        console.log('Creating encrypted sell transaction');
+
         
         const transactionData = {
           to: tokenData.bondingCurveAddress,
@@ -693,34 +652,18 @@ function TokenLaunchpad() {
           gasLimit: 500000
         };
 
-        console.log('Sell transaction data before encryption:', {
-          to: transactionData.to,
-          dataLength: transactionData.data.length,
-          value: transactionData.value,
-          gasLimit: transactionData.gasLimit
-        });
-
         const encryptedTransaction = await biteInstance.encryptTransaction(transactionData);
-        
-        console.log('Encrypted sell transaction received:', {
-          to: encryptedTransaction?.to,
-          dataLength: encryptedTransaction?.data?.length,
-          value: encryptedTransaction?.value,
-          gasLimit: encryptedTransaction?.gasLimit
-        });
+      
 
         if (!encryptedTransaction || !encryptedTransaction.data || encryptedTransaction.data === '0x' || encryptedTransaction.data === '') {
           throw new Error('BITE encryption failed - no transaction data returned');
         }
 
-        console.log('Sending encrypted sell transaction');
         const transaction = await signer.sendTransaction(encryptedTransaction);
         
         await transaction.wait();
         
-      } else {
-        console.log('Creating public sell transaction');
-        
+      } else {      
         const transaction = await bondingCurveContract.sellTokens(sellAmountWei, 0);
         
         await transaction.wait();

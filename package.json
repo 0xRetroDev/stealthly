@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@skalenetwork/bite": "^0.4.1-beta.1",
+    "@skalenetwork/bite": "^0.7.0-develop.1",
     "ethers": "^6.15.0",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
