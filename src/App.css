@@ -2716,7 +2716,7 @@ body::after {
 }
 
 .calldata-warning::before {
-  content: '⚠️';
+  content: '';
   margin-right: var(--spacing-sm);
 }
 
