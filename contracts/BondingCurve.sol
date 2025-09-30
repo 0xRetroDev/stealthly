@@ -26,7 +26,7 @@ interface ITraderJoeRouter {
  * Features:
  * - Exponential bonding curve for price discovery
  * - Anti-dump mechanism with time-decaying fees
- * - Automatic graduation to Trader Joe DEX
+ * - Automatic graduation to DEX of choice
  * - Real-time price calculations and previews
  * - Reentrancy protection on all state-changing functions
  * 
@@ -190,10 +190,8 @@ contract BondingCurve is ReentrancyGuard {
         assembly { chainId := chainid() }
         
         if (chainId == 43113) {
-            // Avalanche Fuji Testnet
             traderJoeRouter = 0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106;
         } else if (chainId == 43114) {
-            // Avalanche Mainnet
             traderJoeRouter = 0x60aE616a2155Ee3d9A68541Ba4544862310933d4;
         } else {
             // Default to mainnet

@@ -1,20 +1,34 @@
-# STEALTHLY
+# Token Launch Platform on FAIR
 
-**Token Launchpad Demo on FAIR chain**
+A Pump.fun-style token launch platform built on FAIR Chain with BITE encryption for secure token creation and trading.
 
-STEALTHLY is a cutting-edge token launchpad that enables users to create, trade, and manage tokens with advanced MEV (Maximum Extractable Value) protection. Built on the SKALE Network for zero gas fees and lightning-fast transactions and powered by BITE encryption.
+## Features
 
-## Instructions
+- **Exponential Bonding Curve**: Fair price discovery from launch to graduation
+- **Anti-Dump Protection**: Time-decaying fees (20% → 1% over 15 minutes)
+- **Auto-Graduation**: Automatic DEX listing when threshold is reached. (Feel free to integrete your DEX of choice)
+- **BITE Encryption**: Transaction security through FAIR's native encryption layer
 
-1. **Install dependencies**
+## How It Works
 
-```
-npm install
-```
+1. **Create**: Deploy your token with metadata and optional initial buy
+2. **Trade**: Buy/sell on the bonding curve with transparent pricing
+3. **Graduate**: Automatic liquidity provision to DEX
 
-2. **Start the development server**
+## Smart Contracts
 
-```
-npm run dev
-```
+- `TokenFactory.sol` - Token deployment and fee management
+- `BondingCurve.sol` - Exponential curve trading with platform mechanics
+- `LaunchToken.sol` - ERC20 token with trading restrictions
 
+## Security
+
+- **BITE Encryption**: All transactions secured through FAIR's encryption 
+
+## ⚠️ Disclaimer
+
+This is a demo project for educational purposes. Use responsibly and never gamble more than you can afford to lose.
+
+---
+
+**Built with ❤️ on FAIR Network**
